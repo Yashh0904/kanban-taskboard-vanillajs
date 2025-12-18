@@ -1,0 +1,108 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+}
+
+#main-container {
+  margin: 8px;
+  padding: 16px;
+  max-width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+#main-container > div {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#main-container > div > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.add {
+  height: 32px;
+  color: white;
+  background-color: #404040;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.1));
+}
+
+#task,
+#input {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border: 1px solid #d4d4d4;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
+}
+
+#task-name,
+#input-name {
+  margin: 8px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+#task-desc,
+#input-desc {
+  margin: 8px;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+h1 {
+  margin-bottom: 8px;
+}
+
+#task-buttons {
+  display: flex;
+  justify-content: end;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 0 16px;
+}
+
+#task-buttons > button {
+  border: none;
+  background-color: transparent;
+}
+
+.lucide {
+  color: #9ca3af;
+}
+
+.lucide:hover {
+  color: #525252;
+  transition: color 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  #main-container {
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  #main-container {
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
