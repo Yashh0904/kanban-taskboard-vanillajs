@@ -1,6 +1,7 @@
 let tasks = [];
 
 let activeAddBtn = null;
+let dragged = null;
 
 renderTasks();
 
@@ -24,11 +25,54 @@ document.addEventListener("click", (e) => {
   }
 
   const saveBtn = e.target.closest("#save");
-  if (saveBtn) {    
+  if (saveBtn) {
     saveTask(saveBtn.closest("#task").dataset.id);
     return;
   }
 });
+
+document.addEventListener("dragstart", (e) => {
+  dragged = e.target.closest("#task");
+});
+
+document.querySelectorAll(".list").forEach((list) =>
+  list.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    list.style.backgroundColor = "#e7e5e4";
+  })
+);
+
+document.querySelectorAll(".list").forEach((list) =>
+  list.addEventListener("dragleave", (e) => {
+    list.style.backgroundColor = "white";
+  })
+);
+
+document.querySelectorAll(".list").forEach((list) =>
+  list.addEventListener("drop", (e) => {
+    e.preventDefault();
+    if (e.target.className === "list") {
+      dragged.parentNode.removeChild(dragged);
+      const id = dragged.dataset.id;
+      updateTask(id, list.parentElement.id);
+    }
+    list.style.backgroundColor = "white";
+    renderTasks();
+  })
+);
+
+document.addEventListener("dragend", (e) => {
+  dragged = null;
+});
+
+function updateTask(id, newCategory) {
+  tasks = tasks.map((task) => {
+    if (task.id === id) {
+      return { ...task, category: newCategory };
+    }
+    return task;
+  });
+}
 
 function handleAdd(addBtn) {
   if (!activeAddBtn) {
@@ -86,23 +130,21 @@ function submitTask(column) {
 
 function saveTask(id) {
   const parent = document.querySelector(`[data-id = "${id}"`);
-  
+
   const name = parent.querySelector(`input[name="task-name"]`).value;
   const desc = parent.querySelector(`input[name="task-desc"]`).value;
 
   tasks = tasks.map((task) => {
-    if(task.id === id) {
+    if (task.id === id) {
       return { ...task, taskName: name, taskDesc: desc, editable: false };
     }
     return task;
   });
 
   renderTasks();
-  
 }
 
 function renderTasks() {
-  
   document.querySelectorAll(".list").forEach((list) => {
     list.innerHTML = ``;
   });
