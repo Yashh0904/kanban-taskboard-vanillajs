@@ -3,7 +3,13 @@ let tasks = [];
 let activeAddBtn = null;
 let dragged = null;
 
+const saved = localStorage.getItem("taskList");
+if (saved) tasks = JSON.parse(saved);
 renderTasks();
+
+function saveTasks() {
+  localStorage.setItem("taskList", JSON.stringify(tasks));
+}
 
 document.addEventListener("click", (e) => {
   const addBtn = e.target.closest(".add");
@@ -14,52 +20,52 @@ document.addEventListener("click", (e) => {
 
   const deleteBtn = e.target.closest("#delete");
   if (deleteBtn) {
-    deleteTask(deleteBtn.closest("#task").dataset.id);
+    deleteTask(deleteBtn.closest(".task").dataset.id);
     return;
   }
 
   const editBtn = e.target.closest("#edit");
   if (editBtn) {
-    editTask(editBtn.closest("#task").dataset.id);
+    editTask(editBtn.closest(".task").dataset.id);
     return;
   }
 
   const saveBtn = e.target.closest("#save");
   if (saveBtn) {
-    saveTask(saveBtn.closest("#task").dataset.id);
+    saveTask(saveBtn.closest(".task").dataset.id);
     return;
   }
 });
 
 document.addEventListener("dragstart", (e) => {
-  dragged = e.target.closest("#task");
+  dragged = e.target.closest(".task");
 });
 
-document.querySelectorAll(".list").forEach((list) =>
-  list.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    list.style.backgroundColor = "#e7e5e4";
-  })
-);
+document.addEventListener("dragover", (e) => {
+  const list = e.target.closest(".list");
+  if (!list) return;  
 
-document.querySelectorAll(".list").forEach((list) =>
-  list.addEventListener("dragleave", (e) => {
-    list.style.backgroundColor = "white";
-  })
-);
+  e.preventDefault();
+  list.style.backgroundColor = "#e7e5e4";
+});
 
-document.querySelectorAll(".list").forEach((list) =>
-  list.addEventListener("drop", (e) => {
-    e.preventDefault();
-    if (e.target.className === "list") {
-      dragged.parentNode.removeChild(dragged);
-      const id = dragged.dataset.id;
-      updateTask(id, list.parentElement.id);
-    }
-    list.style.backgroundColor = "white";
-    renderTasks();
-  })
-);
+document.addEventListener("dragleave", (e) => {
+  const list = e.target.closest(".list");
+  if (!list) return;
+  list.style.backgroundColor = "white";
+});
+
+document.addEventListener("drop", (e) => {
+  const list = e.target.closest(".list");
+  if (!list || !dragged) return;
+  e.preventDefault();
+
+  dragged.parentNode.removeChild(dragged);
+  const id = dragged.dataset.id;
+  updateTask(id, list.parentElement.id);
+  list.style.backgroundColor = "white";
+  renderTasks();
+});
 
 document.addEventListener("dragend", (e) => {
   dragged = null;
@@ -150,11 +156,12 @@ function renderTasks() {
   });
 
   tasks.forEach((task) => buildTaskDiv(task));
+  saveTasks();
 }
 
 function buildTaskDiv(task) {
   const taskDiv = document.createElement("div");
-  taskDiv.id = "task";
+  taskDiv.className = "task";
   taskDiv.dataset.id = task.id;
 
   if (task.editable === false) {
